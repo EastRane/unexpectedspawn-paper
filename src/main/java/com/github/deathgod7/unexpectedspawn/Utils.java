@@ -166,13 +166,14 @@ public class Utils {
 
 		WorldBorder border = world.getWorldBorder();
 		double borderSize = border.getSize();
-        if (borderSize < 50000) {
+		// eastrane если граница есть (меньше 50к и больше 200 в диаметре), значит берём минмакс из её радиуса (и уменьшаем на 50, чтобы потенциально не было спавна прям у движущейся границы)
+        if (borderSize < 50000 && borderSize > 200) {
 			int border_xcenter = border.getCenter().getBlockX();
 			int border_zcenter = border.getCenter().getBlockZ();
-			xmin = (int) Math.round(border_xcenter - (borderSize / 2));
-			zmin = (int) Math.round(border_zcenter - (borderSize / 2));
-			xmax = (int) Math.round(border_xcenter + (borderSize / 2));
-			zmax = (int) Math.round(border_zcenter + (borderSize / 2));
+			xmin = (int) Math.round(border_xcenter - (borderSize / 2))+50;
+			zmin = (int) Math.round(border_zcenter - (borderSize / 2))+50;
+			xmax = (int) Math.round(border_xcenter + (borderSize / 2))-50;
+			zmax = (int) Math.round(border_zcenter + (borderSize / 2))-50;
 			LogConsole.warn("World border found. Area set to " + xmin + " " + zmin + "; " + xmax + " " + zmax + ".", LogConsole.logTypes.log);
         }
 		int retryonfail = getAreaValue(null, ConfigVariable.FailRadius, world);
