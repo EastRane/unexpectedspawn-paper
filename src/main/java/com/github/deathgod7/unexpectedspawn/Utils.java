@@ -23,6 +23,7 @@ package com.github.deathgod7.unexpectedspawn;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.WorldBorder;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -158,11 +159,22 @@ public class Utils {
 	 */
 	public static Location getRandomSpawnLocation(World world) {
 		int tryCount = 0;
-
 		int xmin = getAreaValue(null, ConfigVariable.XMin, world);
 		int xmax = getAreaValue(null, ConfigVariable.XMax, world);
 		int zmin = getAreaValue(null, ConfigVariable.ZMin, world);
 		int zmax = getAreaValue(null, ConfigVariable.ZMax, world);
+
+		WorldBorder border = world.getWorldBorder();
+		double borderSize = border.getSize();
+        if (borderSize < 50000) {
+			int border_xcenter = border.getCenter().getBlockX();
+			int border_zcenter = border.getCenter().getBlockZ();
+			xmin = (int) Math.round(border_xcenter - (borderSize / 2));
+			zmin = (int) Math.round(border_zcenter - (borderSize / 2));
+			xmax = (int) Math.round(border_xcenter + (borderSize / 2));
+			zmax = (int) Math.round(border_zcenter + (borderSize / 2));
+			LogConsole.warn("World border found. Area set to " + xmin + " " + zmin + "; " + xmax + " " + zmax + ".", LogConsole.logTypes.log);
+        }
 		int retryonfail = getAreaValue(null, ConfigVariable.FailRadius, world);
 
 		HashSet<Material> spawnBlacklistedMaterials = getBlacklistedMaterials(ConfigVariable.BlackListMaterials, world);
